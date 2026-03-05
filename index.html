@@ -1,122 +1,776 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ian Solorzano | Cybersecurity</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ian Solorzano | Cybersecurity Portfolio</title>
+  <meta name="description" content="Cybersecurity portfolio: projects, writeups, cloud security labs, and tooling." />
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #0f172a;
-            color: #e5e7eb;
-        }
+  <style>
+    :root{
+      --bg: #070b14;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.09);
+      --text: #e6edf6;
+      --muted: rgba(230,237,246,.72);
+      --line: rgba(255,255,255,.12);
+      --accent: #60a5fa;
+      --accent2: #a78bfa;
+      --good: #34d399;
+      --warn: #fbbf24;
+      --bad: #fb7185;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius: 18px;
+    }
 
-        header {
-            text-align: center;
-            padding: 80px 20px 40px 20px;
-        }
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 70% -10%, rgba(96,165,250,.18), transparent 55%),
+                  radial-gradient(900px 600px at 20% 10%, rgba(167,139,250,.14), transparent 55%),
+                  linear-gradient(180deg, #050814 0%, var(--bg) 55%, #050814 100%);
+      color: var(--text);
+      overflow-x:hidden;
+    }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
+    /* animated grid background */
+    .grid-bg{
+      position:fixed; inset:0; pointer-events:none; z-index:-1;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: radial-gradient(600px 420px at 50% 0%, black 35%, transparent 75%);
+      opacity:.25;
+      transform: translate3d(0,0,0);
+      animation: drift 18s linear infinite;
+    }
+    @keyframes drift{
+      0%{ background-position: 0 0, 0 0; }
+      100%{ background-position: 180px 180px, 180px 180px; }
+    }
 
-        p.subtitle {
-            color: #9ca3af;
-            font-size: 1.2rem;
-        }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ width:min(1120px, 92vw); margin:0 auto; }
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-            padding: 40px 20px;
-        }
+    /* nav */
+    nav{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(14px);
+      background: rgba(7,11,20,.55);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .nav-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 14px 0;
+    }
+    .brand{
+      display:flex; gap:10px; align-items:center;
+      font-weight:800; letter-spacing:.3px;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 22px rgba(96,165,250,.35);
+    }
+    .nav-links{
+      display:flex; gap:18px; align-items:center;
+      color: var(--muted);
+      font-weight:600;
+    }
+    .nav-links a{
+      padding:8px 10px;
+      border-radius: 12px;
+      transition: .2s ease;
+    }
+    .nav-links a:hover{
+      color: var(--text);
+      background: rgba(255,255,255,.06);
+    }
+    .btn{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      transition: .2s ease;
+      font-weight:700;
+      color: var(--text);
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.2);
+      background: rgba(255,255,255,.09);
+    }
+    .btn .pill{
+      font-size:12px;
+      padding:3px 8px;
+      border-radius: 999px;
+      background: rgba(96,165,250,.15);
+      border:1px solid rgba(96,165,250,.25);
+      color: rgba(230,237,246,.9);
+      font-weight:800;
+      letter-spacing:.2px;
+    }
 
-        .section {
-            margin-bottom: 40px;
-        }
+    /* hero */
+    header{
+      padding: 56px 0 26px;
+    }
+    .hero{
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 26px;
+      align-items: start;
+    }
+    .title{
+      font-size: clamp(34px, 4.6vw, 56px);
+      line-height: 1.02;
+      margin:0;
+      letter-spacing: -.8px;
+    }
+    .subtitle{
+      margin: 14px 0 0;
+      color: var(--muted);
+      max-width: 60ch;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .glow{
+      background: linear-gradient(135deg, var(--accent) 10%, var(--accent2) 75%);
+      -webkit-background-clip: text;
+      background-clip:text;
+      color: transparent;
+    }
+    .hero-actions{
+      display:flex; gap:12px; flex-wrap:wrap;
+      margin-top: 18px;
+    }
+    .ghost{
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: none;
+    }
 
-        h2 {
-            border-bottom: 1px solid #374151;
-            padding-bottom: 10px;
-        }
+    .hero-card{
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .hero-card::before{
+      content:"";
+      position:absolute; inset:-120px -120px auto auto;
+      width: 260px; height: 260px;
+      background: radial-gradient(circle at 30% 30%, rgba(96,165,250,.20), transparent 62%),
+                  radial-gradient(circle at 70% 70%, rgba(167,139,250,.18), transparent 62%);
+      filter: blur(2px);
+    }
+    .hero-card-inner{
+      position:relative;
+      padding: 18px 18px 16px;
+    }
+    .mini{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.10);
+      margin-bottom: 12px;
+    }
+    .mini strong{ font-size: 13px; letter-spacing:.2px; }
+    .mini span{
+      font-size: 12px; color: rgba(230,237,246,.7);
+      border: 1px solid rgba(255,255,255,.12);
+      padding: 4px 8px; border-radius: 999px;
+      background: rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+    .terminal{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
+      padding: 14px 14px 10px;
+      background: rgba(0,0,0,.30);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      color: rgba(230,237,246,.92);
+    }
+    .terminal .prompt{ color: rgba(96,165,250,.95); }
+    .terminal .ok{ color: var(--good); }
+    .terminal .muted{ color: rgba(230,237,246,.65); }
 
-        .projects a {
-            display: block;
-            text-decoration: none;
-            color: #60a5fa;
-            margin-top: 8px;
-        }
+    /* sections */
+    section{ padding: 24px 0; }
+    .section-title{
+      display:flex; align-items:end; justify-content:space-between;
+      gap: 14px;
+      margin: 18px 0 14px;
+    }
+    .section-title h2{
+      margin:0;
+      font-size: 20px;
+      letter-spacing: -.2px;
+    }
+    .hint{
+      color: rgba(230,237,246,.62);
+      font-size: 13px;
+    }
 
-        .projects a:hover {
-            text-decoration: underline;
-        }
+    /* chips */
+    .chips{ display:flex; flex-wrap:wrap; gap:10px; }
+    .chip{
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      color: rgba(230,237,246,.86);
+      font-weight:700;
+      font-size: 13px;
+    }
 
-        footer {
-            text-align: center;
-            padding: 40px;
-            color: #6b7280;
-        }
+    /* projects */
+    .toolbar{
+      display:flex; gap:10px; align-items:center;
+      flex-wrap:wrap;
+      margin: 8px 0 14px;
+    }
+    .search{
+      flex: 1 1 260px;
+      display:flex; align-items:center; gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .search input{
+      width:100%;
+      background: transparent;
+      border:none;
+      outline:none;
+      color: var(--text);
+      font-weight:700;
+      font-size: 14px;
+    }
+    .seg{
+      display:flex;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      overflow:hidden;
+    }
+    .seg button{
+      cursor:pointer;
+      padding: 10px 12px;
+      border:none;
+      background:transparent;
+      color: rgba(230,237,246,.72);
+      font-weight:800;
+      font-size: 13px;
+    }
+    .seg button.active{
+      background: rgba(255,255,255,.10);
+      color: var(--text);
+    }
 
-        .links a {
-            margin-right: 15px;
-            color: #60a5fa;
-            text-decoration: none;
-        }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+    .card{
+      grid-column: span 6;
+      padding: 16px 16px 14px;
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 14px 50px rgba(0,0,0,.30);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .card:hover{
+      transform: translateY(-3px);
+      border-color: rgba(255,255,255,.20);
+      background: rgba(255,255,255,.07);
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:-80px auto auto -80px;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(96,165,250,.18), transparent 62%);
+      filter: blur(2px);
+      opacity:.9;
+    }
+    .card .top{
+      position:relative;
+      display:flex; align-items:flex-start; justify-content:space-between; gap: 14px;
+    }
+    .card h3{
+      margin:0;
+      font-size: 16px;
+      letter-spacing:-.2px;
+    }
+    .badge{
+      font-size: 11px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(230,237,246,.78);
+      font-weight:900;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+    .card p{
+      position:relative;
+      margin: 10px 0 12px;
+      color: rgba(230,237,246,.72);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    .tags{
+      position:relative;
+      display:flex; flex-wrap:wrap; gap:8px;
+      margin-bottom: 12px;
+    }
+    .tag{
+      font-size: 12px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(96,165,250,.12);
+      border: 1px solid rgba(96,165,250,.22);
+      color: rgba(230,237,246,.86);
+      font-weight:800;
+    }
+    .card .actions{
+      position:relative;
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+    .small{
+      padding: 9px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
 
-        .links a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    /* timeline */
+    .timeline{
+      border-left: 2px solid rgba(255,255,255,.10);
+      margin-left: 8px;
+      padding-left: 16px;
+      display:grid;
+      gap: 12px;
+    }
+    .titem{
+      position:relative;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+    }
+    .titem::before{
+      content:"";
+      position:absolute;
+      left:-24px; top: 16px;
+      width: 12px; height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 18px rgba(96,165,250,.35);
+    }
+    .titem .when{
+      font-size:12px;
+      color: rgba(230,237,246,.62);
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .titem strong{ display:block; margin-top:4px; }
+    .titem p{ margin: 6px 0 0; color: rgba(230,237,246,.72); }
+
+    /* modal */
+    .modal{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index: 80;
+    }
+    .modal.open{ display:flex; }
+    .modal-card{
+      width: min(920px, 96vw);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(10,14,28,.92);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 26px 80px rgba(0,0,0,.60);
+      overflow:hidden;
+    }
+    .modal-head{
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .modal-head strong{ letter-spacing:.2px; }
+    .xbtn{
+      cursor:pointer;
+      border:none;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-weight:900;
+    }
+    .modal-body{
+      padding: 16px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .pane{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .pane h4{ margin:0 0 8px; }
+    .pane ul{ margin:0; padding-left: 18px; color: rgba(230,237,246,.72); }
+    .pane li{ margin: 6px 0; }
+
+    footer{
+      padding: 30px 0 44px;
+      color: rgba(230,237,246,.55);
+      text-align:center;
+      border-top: 1px solid rgba(255,255,255,.08);
+      margin-top: 26px;
+    }
+
+    /* responsive */
+    @media (max-width: 920px){
+      .hero{ grid-template-columns: 1fr; }
+      .card{ grid-column: span 12; }
+      .modal-body{ grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="grid-bg" aria-hidden="true"></div>
 
-<header>
-    <h1>Ian Solorzano</h1>
-    <p class="subtitle">Cybersecurity Student | eJPT | Cloud Security</p>
-
-    <div class="links">
-        <a href="https://github.com/IanSolorzanoC">GitHub</a>
-        <a href="https://linkedin.com/in/iansolorzano/">LinkedIn</a>
+  <nav>
+    <div class="wrap nav-inner">
+      <div class="brand">
+        <span class="dot"></span>
+        <span>IanSolorzano</span>
+      </div>
+      <div class="nav-links">
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#contact">Contact</a>
+        <a class="btn" href="https://github.com/IanSolorzanoC" target="_blank" rel="noreferrer">
+          GitHub <span class="pill">live</span>
+        </a>
+      </div>
     </div>
-</header>
+  </nav>
 
-<div class="container">
-
-    <div class="section">
-        <h2>About</h2>
-        <p>
-            Cybersecurity student focused on offensive security, cloud security,
-            and practical security engineering. I build technical projects and
-            security tools to develop real-world skills.
+  <header>
+    <div class="wrap hero">
+      <div>
+        <h1 class="title">
+          Security projects, <span class="glow">built to ship</span>.
+        </h1>
+        <p class="subtitle">
+          I’m <b>Ian Solorzano</b>, a cybersecurity student focused on offensive security,
+          cloud security, and practical security engineering. I build tools, labs, and writeups.
         </p>
-    </div>
 
-    <div class="section projects">
+        <div class="hero-actions">
+          <a class="btn" href="#projects">View Projects</a>
+          <a class="btn ghost" href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a class="btn ghost" href="#contact">Contact</a>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <div class="hero-card-inner">
+          <div class="mini">
+            <strong>Cybersecurity Student</strong>
+            <span>eJPT • Cloud Security</span>
+          </div>
+          <div class="terminal" aria-label="terminal">
+            <div><span class="prompt">ian@portfolio</span>:<span class="muted">~</span>$ whoami</div>
+            <div class="ok">→ practical builder</div>
+            <div><span class="prompt">ian@portfolio</span>:<span class="muted">~</span>$ focus</div>
+            <div class="muted">→ offensive • cloud • tooling • writeups</div>
+            <div><span class="prompt">ian@portfolio</span>:<span class="muted">~</span>$ status</div>
+            <div class="ok">→ actively shipping projects</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="projects">
+      <div class="section-title">
         <h2>Projects</h2>
+      </div>
 
-        <a href="https://github.com/IanSolorzanoC/portfolio/tree/main/projects/PhishGuard">
-            PhishGuard — Phishing URL detection tool (Python)
-        </a>
+      <div class="toolbar">
+        <div class="search">
+          <span style="opacity:.8">⌕</span>
+          <input id="q" placeholder="Search projects (e.g., phishing, aws, soc)..." />
+        </div>
 
-        <a href="https://github.com/IanSolorzanoC/portfolio/tree/main/projects/aws-secure-login-lab">
-            Cloud Security Lab — AWS security architecture and monitoring
-        </a>
+        <div class="seg" role="tablist" aria-label="Project filters">
+          <button class="active" data-filter="all">All</button>
+          <button data-filter="tool">Tools</button>
+          <button data-filter="cloud">Cloud</button>
+          <button data-filter="writeup">Writeups</button>
+        </div>
+      </div>
 
-        <a href="https://github.com/IanSolorzanoC/portfolio/tree/main/projects/itsm_project">
-            ITSM PROJECT - ticket management
-        </a>
+      <div class="grid" id="cards">
+        <!-- PhishGuard -->
+        <article class="card" data-type="tool" data-title="PhishGuard" data-tags="phishing url python ssl hsts redirects heuristics">
+          <div class="top">
+            <h3>PhishGuard</h3>
+            <span class="badge">Tool</span>
+          </div>
+          <p>Production-style phishing URL risk analyzer with weighted heuristics, TLS inspection, redirects/HSTS checks, and safe failure modes.</p>
+          <div class="tags">
+            <span class="tag">Python</span><span class="tag">Heuristics</span><span class="tag">TLS</span><span class="tag">URL Analysis</span>
+          </div>
+          <div class="actions">
+            <a class="btn small" href="https://github.com/IanSolorzanoC/portfolio/tree/main/projects/PhishGuard" target="_blank" rel="noreferrer">Repo</a>
+            <button class="btn small ghost" onclick="openModal('PhishGuard')">Details</button>
+          </div>
+        </article>
 
+        <!-- Cloud Security Lab -->
+        <article class="card" data-type="cloud" data-title="Cloud Security Lab" data-tags="aws iam cloudtrail guardduty security monitoring">
+          <div class="top">
+            <h3>Cloud Security Lab</h3>
+            <span class="badge">Cloud</span>
+          </div>
+          <p>AWS security architecture + monitoring lab: IAM hardening, logging, detection, and incident-style validation.</p>
+          <div class="tags">
+            <span class="tag">AWS</span><span class="tag">IAM</span><span class="tag">Monitoring</span><span class="tag">Detection</span>
+          </div>
+          <div class="actions">
+            <a class="btn small" href="https://github.com/IanSolorzanoC/portfolio/tree/main/projects/aws-secure-login-lab" target="_blank" rel="noreferrer">Repo</a>
+            <button class="btn small ghost" onclick="openModal('Cloud Security Lab')">Details</button>
+          </div>
+        </article>
+
+        <!-- ITSM L1 Automator -->
+        <article class="card" data-type="tool" data-title="ITSM L1 Automator" data-tags="tickets automation fastapi streamlit triage">
+          <div class="top">
+            <h3>ITSM L1 Automator</h3>
+            <span class="badge">Tool</span>
+          </div>
+          <p>Ticket triage automation: categorization, prioritization, and structured outputs designed for real service desk workflows.</p>
+          <div class="tags">
+            <span class="tag">Automation</span><span class="tag">FastAPI</span><span class="tag">Streamlit</span>
+          </div>
+          <div class="actions">
+            <a class="btn small" href="https://github.com/IanSolorzanoC/portfolio/tree/main/projects/itsm_project" target="_blank" rel="noreferrer">Repo</a>
+            <button class="btn small ghost" onclick="openModal('ITSM L1 Automator')">Details</button>
+          </div>
+        </article>
+
+        <!-- Writeups placeholder -->
+        <article class="card" data-type="writeup" data-title="Security Writeups" data-tags="htb labs writeups reports">
+          <div class="top">
+            <h3>Security Writeups</h3>
+            <span class="badge">Writeups</span>
+          </div>
+          <p>Short, structured writeups: reconnaissance → exploitation (when applicable) → mitigation notes. Focus on clarity and repeatability.</p>
+          <div class="tags">
+            <span class="tag">HTB</span><span class="tag">Reports</span><span class="tag">Notes</span>
+          </div>
+          <div class="actions">
+            <a class="btn small" href="https://github.com/IanSolorzanoC/portfolio/tree/main/MachinesHTB" target="_blank" rel="noreferrer">Repo</a>
+            <button class="btn small ghost" onclick="openModal('Security Writeups')">Details</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="section-title">
+        <h2>Skills</h2>
+        <div class="hint">Focused set. Built around projects.</div>
+      </div>
+
+      <div class="chips">
+        <span class="chip">Offensive Security (junior)</span>
+        <span class="chip">Web Recon & URL Analysis</span>
+        <span class="chip">Python Tooling</span>
+        <span class="chip">AWS IAM & Security Fundamentals</span>
+        <span class="chip">Logging & Monitoring (Lab)</span>
+        <span class="chip">Writeups & Documentation</span>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="section-title">
+        <h2>Contact</h2>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 12;">
+          <div class="top">
+            <h3>Let’s connect</h3>
+            <span class="badge">Open to internships</span>
+          </div>
+          <div class="actions">
+            <a class="btn small" href="https://github.com/IanSolorzanoC" target="_blank" rel="noreferrer">GitHub</a>
+            <a class="btn small ghost" href="https://www.linkedin.com/in/iansolorzano" target="_blank" rel="noreferrer">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © <span id="year"></span> Ian Solorzano • Built with pure HTML/CSS/JS on GitHub Pages
+    </footer>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-label="Project details">
+      <div class="modal-head">
+        <strong id="mTitle">Project</strong>
+        <button class="xbtn" onclick="closeModal()">Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="pane">
+          <h4>What it is</h4>
+          <p id="mDesc" style="margin:0; color: rgba(230,237,246,.72); line-height:1.6;"></p>
+        </div>
+        <div class="pane">
+          <h4>Highlights</h4>
+          <ul id="mList"></ul>
+        </div>
+      </div>
     </div>
+  </div>
 
-</div>
+  <script>
+    // year
+    document.getElementById("year").textContent = new Date().getFullYear();
 
-<footer>
-    © 2026 Ian Solorzano
-</footer>
+    // filtering + search
+    const q = document.getElementById("q");
+    const cards = [...document.querySelectorAll("#cards .card")];
+    const segButtons = [...document.querySelectorAll(".seg button")];
 
+    let activeFilter = "all";
+
+    function apply(){
+      const query = q.value.trim().toLowerCase();
+      cards.forEach(c => {
+        const type = c.dataset.type;
+        const hay = (c.dataset.title + " " + c.dataset.tags).toLowerCase();
+        const matchFilter = (activeFilter === "all" || type === activeFilter);
+        const matchQuery = (!query || hay.includes(query));
+        c.style.display = (matchFilter && matchQuery) ? "" : "none";
+      });
+    }
+
+    q.addEventListener("input", apply);
+
+    segButtons.forEach(b => {
+      b.addEventListener("click", () => {
+        segButtons.forEach(x => x.classList.remove("active"));
+        b.classList.add("active");
+        activeFilter = b.dataset.filter;
+        apply();
+      });
+    });
+
+    // modal data (edit these to match your repos)
+    const details = {
+      "PhishGuard": {
+        desc: "A deterministic phishing URL risk analyzer designed like a production tool: weighted signals, gates, counterweights, and safe network handling.",
+        list: [
+          "Tiered scoring engine (A/B/C) with bounded confidence output",
+          "TLS inspection, HSTS & redirect analysis",
+          "Brand impersonation signals + domain normalization",
+          "CLI + Streamlit UI (optional) for demos",
+        ]
+      },
+      "Cloud Security Lab": {
+        desc: "Hands-on AWS security lab focusing on architecture, visibility, and detection. Built to demonstrate practical cloud security workflow.",
+        list: [
+          "IAM hardening and least-privilege patterns",
+          "Centralized logging (CloudTrail) and detection signals",
+          "Alerting + validation using safe simulations",
+          "Diagrams + writeup-driven approach",
+        ]
+      },
+      "ITSM L1 Automator": {
+        desc: "Automation tool for service desk workflows: takes raw ticket text and returns structured triage outputs for L1/L2 handoff.",
+        list: [
+          "FastAPI backend + optional Streamlit dashboard",
+          "Consistent output schema: category, priority, next steps",
+          "Designed for repeatability and speed",
+          "Easy to extend with rules or integrations",
+        ]
+      },
+      "Security Writeups": {
+        desc: "Short, structured writeups that prioritize clarity: what happened, evidence, how to reproduce, and how to mitigate.",
+        list: [
+          "Consistent template for fast scanning",
+          "Screenshots + commands + reasoning",
+          "Mitigation notes to show blue-team thinking",
+          "Focus on quality over quantity",
+        ]
+      }
+    };
+
+    function openModal(title){
+      const modal = document.getElementById("modal");
+      const data = details[title] || { desc: "Details coming soon.", list: [] };
+
+      document.getElementById("mTitle").textContent = title;
+      document.getElementById("mDesc").textContent = data.desc;
+
+      const ul = document.getElementById("mList");
+      ul.innerHTML = "";
+      data.list.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        ul.appendChild(li);
+      });
+
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden","false");
+    }
+
+    function closeModal(){
+      const modal = document.getElementById("modal");
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden","true");
+    }
+
+    // close on background / ESC
+    document.getElementById("modal").addEventListener("click", (e) => {
+      if(e.target.id === "modal") closeModal();
+    });
+    window.addEventListener("keydown", (e) => {
+      if(e.key === "Escape") closeModal();
+    });
+  </script>
 </body>
 </html>
